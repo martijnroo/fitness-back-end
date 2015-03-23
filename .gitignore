@@ -1,0 +1,14 @@
+.DS_Store
+*.pyc
+*.pyo
+*.
+venv
+venv*
+dist
+*.egg
+*.egg-info
+_mailinglist
+.tox
+*.db
+db_repository
+db_repository*
