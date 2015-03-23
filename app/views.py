@@ -86,19 +86,6 @@ class UserAPI(Resource):
 
         return u.id, 201
 
-    def post(self):
-        """
-            Creates a new user with given args. Returns 201 on success.
-        """
-
-        args = self.reqparse.parse_args()
-
-        u = models.User(nickname=args['name'])
-        db.session.add(u)
-        db.session.commit()
-
-        return u.id, 201
-
     def delete(self, id):
         """
             Deletes the user profile from the database. Return 204 on successful
@@ -117,11 +104,30 @@ class UsersAPI(Resource):
         Show all the users in DB
     """
 
+    def __init__(self):
+
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('name', type = str)
+        super(UsersAPI, self).__init__()
+
     def get(self):
         users = models.User.query.all()
 
         if users:
             return jsonify(json_list = [u.as_dict() for u in users])
+
+    def post(self):
+        """
+            Creates a new user with given args. Returns 201 on success.
+        """
+
+        args = self.reqparse.parse_args()
+
+        u = models.User(nickname=args['name'])
+        db.session.add(u)
+        db.session.commit()
+
+        return u.id, 201
 
 class AuthenticationAPI(Resource):
     """
@@ -133,6 +139,6 @@ class AuthenticationAPI(Resource):
 
 
 # API endpoints
-api.add_resource(UserAPI, '/user/<int:id>', '/user/')
+api.add_resource(UserAPI, '/users/<int:id>', '/user/')
 api.add_resource(UsersAPI, '/users/')
 api.add_resource(AuthenticationAPI, '/auth')
