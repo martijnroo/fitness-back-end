@@ -2,6 +2,8 @@ from flask import Flask, jsonify, abort
 from flask.ext.restful import Api, Resource, reqparse
 from app import api, models, db
 
+import json
+
 """
 
     The API routing and logic is done here, as an example, I created a
@@ -69,22 +71,23 @@ class UserAPI(Resource):
         print "ARGUMENTS ------------------"
         print args
 
-
         # Fetch the user and update the fields, unless it is not
-        # a valid ID (404)
+        # a valid ID, then create it
         u = models.User.query.get(int(id))
 
-        if not u:
-            return abort(404)
-
-        # update the SQLAlchemy model
-        if args['name']:
-            u.nickname = args['name']
-
-        # commit it to the database
-        db.session.commit()
-
-        return u.id, 201
+        if u:
+            # update the SQLAlchemy model
+            if args['name']:
+                u.nickname = args['name']
+            # commit it to the database
+            db.session.commit()
+            return '', 204
+        else:
+            # Create new user
+            u = models.User(nickname=args['name'], id=int(id))
+            db.session.add(u)
+            db.session.commit()
+            return u.id, 201
 
     def delete(self, id):
         """
@@ -139,6 +142,6 @@ class AuthenticationAPI(Resource):
 
 
 # API endpoints
-api.add_resource(UserAPI, '/users/<int:id>', '/user/')
+api.add_resource(UserAPI, '/users/<int:id>')
 api.add_resource(UsersAPI, '/users/')
 api.add_resource(AuthenticationAPI, '/auth')
