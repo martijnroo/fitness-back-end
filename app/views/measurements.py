@@ -42,9 +42,6 @@ class MeasurementAPI(Resource):
             to change the name of the user in database.
         """
 
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('name', type = str)
-        super(MeasurementAPI, self).__init__()
 
     def get(self, id=-1):
         """
@@ -52,41 +49,12 @@ class MeasurementAPI(Resource):
         """
 
         # if id provided, fetch the user from db and return it as json
-        u = models.User.query.get(int(id))
+        m = models.Measurement.query.get(int(id))
 
-        if not u:
+        if not m:
             return abort(404)
 
-        return jsonify(u.as_dict())
-
-    def put(self, id):
-        """
-            Updates the user information
-        """
-        # Fetch the arguments, in this example case name=Peter
-        args = self.reqparse.parse_args()
-
-        # Print them for debugging
-        print "ARGUMENTS ------------------"
-        print args
-
-        # Fetch the user and update the fields, unless it is not
-        # a valid ID, then create it
-        u = models.User.query.get(int(id))
-
-        if u:
-            # update the SQLAlchemy model
-            if args['name']:
-                u.nickname = args['name']
-            # commit it to the database
-            db.session.commit()
-            return '', 204
-        else:
-            # Create new user
-            u = models.User(nickname=args['name'], id=int(id))
-            db.session.add(u)
-            db.session.commit()
-            return u.id, 201
+        return jsonify(m.as_dict())
 
     def delete(self, id):
         """
@@ -94,23 +62,22 @@ class MeasurementAPI(Resource):
             deletion.
         """
 
-        u = models.User.query.get(id)
-        if u:
-            db.session.delete(u)
+        m = models.Measurement.query.get(id)
+        if m:
+            db.session.delete(m)
             db.session.commit()
             return '', 204
         return abort(404)
 
 class MeasurementsAPI(Resource):
     """
-        Show all the users in DB
     """
 
     def __init__(self):
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('value', type = str)
-        self.reqparse.add_argument('value', type = str)
+        self.reqparse.add_argument('user_id', type=int)
+        self.reqparse.add_argument('value', type=int)
         super(MeasurementsAPI, self).__init__()
 
     def get(self):
@@ -125,8 +92,12 @@ class MeasurementsAPI(Resource):
         """
 
         args = self.reqparse.parse_args()
+        print args
 
-        m = models.Measurement(nickname=args['value'])
+        m = models.Measurement()
+        m.user_id = args['user_id'] # No check currently on existence user!
+        m.heart_rate = args['value']
+
         db.session.add(m)
         db.session.commit()
 
@@ -134,5 +105,5 @@ class MeasurementsAPI(Resource):
 
 
 # API endpoints
-api.add_resource(MeasurementAPI, '/measurement/<int:id>')
+api.add_resource(MeasurementAPI, '/measurements/<int:id>')
 api.add_resource(MeasurementsAPI, '/measurements/')
