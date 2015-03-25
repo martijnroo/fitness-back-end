@@ -38,4 +38,5 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 api = Api(app)
 
-from app import views, models
+from app import models
+from app.views import users, measurements

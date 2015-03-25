@@ -1,4 +1,5 @@
 from app import db
+from sqlalchemy.schema import ForeignKey
 
 """
     Models.py is the place to store the database schema, which uses SQLAlchemy
@@ -15,6 +16,19 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % (self.nickname)
+
+    # for json serialization
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Measurement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.Integer, ForeignKey("user.id"), nullable=False)
+    heart_rate = db.Column(db.Integer, index=True)
+
+    def __repr__(self):
+        return '<Measurement %i>' % (self.value)
 
     # for json serialization
     def as_dict(self):

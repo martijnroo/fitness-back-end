@@ -2,7 +2,6 @@ from flask import Flask, jsonify, abort
 from flask.ext.restful import Api, Resource, reqparse
 from app import api, models, db
 
-import json
 
 """
 
@@ -117,7 +116,7 @@ class UsersAPI(Resource):
         users = models.User.query.all()
 
         if users:
-            return jsonify(json_list = [u.as_dict() for u in users])
+            return jsonify(users = [u.as_dict() for u in users])
 
     def post(self):
         """
