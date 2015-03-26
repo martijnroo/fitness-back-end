@@ -56,8 +56,10 @@ To edit that page, follow these steps:
 
 2. Go into the repository directory: `cd githup-pages`
 
-3.  Checkout a special branch containing the GitHub pages website `git checkout gh-pages`
+3.  Checkout a special branch containing the GitHub pages website `git checkout gh-pages` Now, only the website files are visible in the github-pages directory and you can edit the files (**especially `index.md`**).
 
-4. Now, only the website files are visible in the github-pages directory and you can edit the files (**especially `index.md`**). Commit and push your changes to the gh-pages branch with `git push origin gh-pages`. After that, the changed website shows up at https://martijnroo.github.io/fitness-back-end/.
+5. Use Jekyll to preview your changes before pushing them. Info on installing and using Jekyll [can be found here](https://help.github.com/articles/using-jekyll-with-pages/).
+
+6. Commit and push your changes to the gh-pages branch with `git push origin gh-pages`. After that, the changed website shows up at https://martijnroo.github.io/fitness-back-end/.
 
 **Note:** GitHub pages and the `index.md` file use Markdown as a markup language. Please [check this page](https://guides.github.com/features/mastering-markdown/#examples) explaining Markdown if you haven't used it before.
