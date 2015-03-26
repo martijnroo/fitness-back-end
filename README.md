@@ -45,14 +45,19 @@ Please follow the next installation steps in order to get it working nicely in a
     - if successful, the API returns success and the ID of the created user
     - now go fetch the user data in JSON format from http://localhost:5000/user/1 - it works!
 
+
 ## API endpoints
 
 This page specifies how to use the API from the front-end/Android app: https://martijnroo.github.io/fitness-back-end/.
 
 To edit that page, follow these steps:
+
 1. Clone the repository again, but in a different folder. For example: `git clone <repo.url> github-pages`
+
 2. Go into the repository directory: `cd githup-pages`
+
 3.  Checkout a special branch containing the GitHub pages website `git checkout gh-pages`
+
 4. Now, only the website files are visible in the github-pages directory and you can edit the files (**especially `index.md`**). Commit and push your changes to the gh-pages branch with `git push origin gh-pages`. After that, the changed website shows up at https://martijnroo.github.io/fitness-back-end/.
 
 **Note:** GitHub pages and the `index.md` file use Markdown as a markup language. Please [check this page](https://guides.github.com/features/mastering-markdown/#examples) explaining Markdown if you haven't used it before.
