@@ -1,5 +1,5 @@
 from flask import jsonify, abort
-from flask.ext.restful import Api, Resource, reqparse
+from flask_restful import Resource, reqparse
 from app import api, models, db
 
 
@@ -52,7 +52,7 @@ class MeasurementAPI(Resource):
         m = models.Measurement.query.get(int(id))
 
         if not m:
-            return abort(404)
+            return abort(404, "Measurement with given ID not found")
 
         return jsonify(m.as_dict())
 
@@ -67,7 +67,7 @@ class MeasurementAPI(Resource):
             db.session.delete(m)
             db.session.commit()
             return '', 204
-        return abort(404)
+        return abort(404, "Measurement with given ID not found")
 
 class MeasurementsAPI(Resource):
     """
@@ -76,8 +76,8 @@ class MeasurementsAPI(Resource):
     def __init__(self):
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('user_id', type=int)
-        self.reqparse.add_argument('value', type=int)
+        self.reqparse.add_argument('user_id', type=int, required=True)
+        self.reqparse.add_argument('heart_rate', type=int, required=True)
         super(MeasurementsAPI, self).__init__()
 
     def get(self):
@@ -88,20 +88,14 @@ class MeasurementsAPI(Resource):
 
     def post(self):
         """
-            Creates a new user with given args. Returns 201 on success.
+            Creates a new measurement with given args. Returns 201 on success.
         """
 
         args = self.reqparse.parse_args()
-        print args
-
-        if not (args['user_id'] and args['value']):
-            response = jsonify({'message': 'The fields user_id and value are both required fields.', 'status': 400})
-            response.status_code = 400
-            return response
 
         m = models.Measurement()
-        m.user_id = args['user_id'] # No check currently on existence user!
-        m.heart_rate = args['value']
+        m.user_id = args['user_id']  # sqlite does not check if user exists in DB!
+        m.heart_rate = args['heart_rate']
 
         db.session.add(m)
         db.session.commit()

@@ -1,10 +1,24 @@
 from flask import Flask, jsonify
-from flask.ext.restful import Api
+from flask_restful import Api
 from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.exceptions import default_exceptions
 from werkzeug.exceptions import HTTPException
 
 __all__ = ['make_json_app']
+
+
+class CustomApi(Api):
+    """
+    Used to overwrite Api.error_router since it ignores
+    programmer-given error message descriptions
+    """
+
+    def error_router(self, original_handler, e):
+        """
+        Calls the original error handler
+        """
+
+        return original_handler(e)
 
 
 def make_json_app(import_name, **kwargs):
@@ -18,8 +32,13 @@ def make_json_app(import_name, **kwargs):
 
     { "message": "The requested URL was not found on the server", "status": 404 }
     """
+
     def make_json_error(ex):
-        response = jsonify(message=ex.description, status=ex.code)
+        response = jsonify(message=
+                           ex.data['message']
+                           if (hasattr(ex, 'data') and ex.data['message'] is not None)
+                           else ex.description,
+                           status=ex.code)
         response.status_code = (ex.code
                                 if isinstance(ex, HTTPException)
                                 else 500)
@@ -32,11 +51,16 @@ def make_json_app(import_name, **kwargs):
 
     return app
 
-
-app = make_json_app(__name__) # Ensures error messages are in JSON.
+app = make_json_app(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
-api = Api(app)
+api = CustomApi(app)
+
 
 from app import models
+<<<<<<< HEAD
 from app.views import users, measurements, exercises
+=======
+from app.views import users, measurements
+
+>>>>>>> c97555dcfa5b4f3f5d31b7664cb920322cdb8518
