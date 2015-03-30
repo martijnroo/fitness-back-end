@@ -39,4 +39,4 @@ db = SQLAlchemy(app)
 api = Api(app)
 
 from app import models
-from app.views import users, measurements
+from app.views import users, measurements, exercises

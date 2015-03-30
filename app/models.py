@@ -38,3 +38,21 @@ class Measurement(db.Model):
         result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         result_dict['timestamp'] = result_dict['timestamp'].__str__()
         return result_dict
+
+class Exercise(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, ForeignKey("user.id"), nullable=False)
+    start_ts = db.Column(db.Integer, index=True)
+    end_ts = db.Column(db.Integer, index=True)
+    type = db.Column(db.String(64), index=True)
+    duration = db.Column(db.Integer, index=True)
+    avg_hr = db.Column(db.Integer, index=True)
+
+    def __repr__(self):
+        return '<Exercise %i>' % (self.id)
+
+    # for json serialization
+    def as_dict(self):
+        result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        result_dict['type'] = result_dict['type'].__str__()
+        return result_dict
