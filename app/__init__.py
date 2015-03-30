@@ -4,8 +4,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.exceptions import default_exceptions
 from werkzeug.exceptions import HTTPException
 
-
 __all__ = ['make_json_app']
+
 
 def make_json_app(import_name, **kwargs):
     """
@@ -33,7 +33,7 @@ def make_json_app(import_name, **kwargs):
     return app
 
 
-app = make_json_app(__name__) # Flask(__name__)
+app = make_json_app(__name__) # Ensures error messages are in JSON.
 app.config.from_object('config')
 db = SQLAlchemy(app)
 api = Api(app)

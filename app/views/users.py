@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, abort
+from flask import jsonify, abort
 from flask.ext.restful import Api, Resource, reqparse
 from app import api, models, db
 
@@ -20,6 +20,7 @@ from app import api, models, db
     https://flask-restful.readthedocs.org/en/0.3.2/
 
 """
+
 
 # API views here
 class UserAPI(Resource):
@@ -101,6 +102,7 @@ class UserAPI(Resource):
             return '', 204
         return abort(404)
 
+
 class UsersAPI(Resource):
     """
         Show all the users in DB
@@ -116,7 +118,7 @@ class UsersAPI(Resource):
         users = models.User.query.all()
 
         if users:
-            return jsonify(users = [u.as_dict() for u in users])
+            return jsonify(users=[u.as_dict() for u in users])
 
     def post(self):
         """
@@ -130,6 +132,7 @@ class UsersAPI(Resource):
         db.session.commit()
 
         return u.id, 201
+
 
 class AuthenticationAPI(Resource):
     """

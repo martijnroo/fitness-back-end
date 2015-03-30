@@ -10,6 +10,7 @@ import datetime
     file to save the heartbeat data in a clever way for each user.
 """
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -22,6 +23,7 @@ class User(db.Model):
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+
 class Measurement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
@@ -33,9 +35,6 @@ class Measurement(db.Model):
 
     # for json serialization
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-"""
-class HeartBeat(db.Model):
-    # heartbeat datamodel here -> foreign key to user
-"""
+        result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        result_dict['timestamp'] = result_dict['timestamp'].__str__()
+        return result_dict

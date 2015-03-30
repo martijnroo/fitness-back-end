@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, abort
+from flask import jsonify, abort
 from flask.ext.restful import Api, Resource, reqparse
 from app import api, models, db
 
@@ -21,6 +21,7 @@ from app import api, models, db
 
 """
 
+
 # API views here
 class MeasurementAPI(Resource):
     """
@@ -41,7 +42,6 @@ class MeasurementAPI(Resource):
             PUT http://fitnessapp.heroku.com/user/2?name=peter
             to change the name of the user in database.
         """
-
 
     def get(self, id=-1):
         """
@@ -84,7 +84,7 @@ class MeasurementsAPI(Resource):
         measurements = models.Measurement.query.all()
 
         if measurements:
-            return jsonify(json_list = [m.as_dict() for m in measurements])
+            return jsonify(measurements=[m.as_dict() for m in measurements])
 
     def post(self):
         """
@@ -93,6 +93,11 @@ class MeasurementsAPI(Resource):
 
         args = self.reqparse.parse_args()
         print args
+
+        if not (args['user_id'] and args['value']):
+            response = jsonify({'message': 'The fields user_id and value are both required fields.', 'status': 400})
+            response.status_code = 400
+            return response
 
         m = models.Measurement()
         m.user_id = args['user_id'] # No check currently on existence user!
