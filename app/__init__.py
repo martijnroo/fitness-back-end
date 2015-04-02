@@ -58,9 +58,4 @@ api = CustomApi(app)
 
 
 from app import models
-<<<<<<< HEAD
 from app.views import users, measurements, exercises
-=======
-from app.views import users, measurements
-
->>>>>>> c97555dcfa5b4f3f5d31b7664cb920322cdb8518
