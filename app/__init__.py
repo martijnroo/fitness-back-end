@@ -37,7 +37,7 @@ def make_json_app(import_name, **kwargs):
         response = jsonify(message=
                            ex.data['message']
                            if (hasattr(ex, 'data') and ex.data['message'] is not None)
-                           else ex.description,
+                           else ex.description if hasattr(ex, 'description') else '',
                            status=ex.code)
         response.status_code = (ex.code
                                 if isinstance(ex, HTTPException)

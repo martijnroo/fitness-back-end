@@ -1,7 +1,9 @@
 from flask import jsonify, abort
 from flask_restful import Resource, reqparse
-from app import api, models, db
+from app import api, db
+from sqlalchemy import desc
 
+from app.models import Measurement
 
 """
 
@@ -49,7 +51,7 @@ class MeasurementAPI(Resource):
         """
 
         # if id provided, fetch the user from db and return it as json
-        m = models.Measurement.query.get(int(id))
+        m = Measurement.query.get(int(id))
 
         if not m:
             return abort(404, "Measurement with given ID not found")
@@ -62,7 +64,7 @@ class MeasurementAPI(Resource):
             deletion.
         """
 
-        m = models.Measurement.query.get(id)
+        m = Measurement.query.get(id)
         if m:
             db.session.delete(m)
             db.session.commit()
@@ -78,10 +80,23 @@ class MeasurementsAPI(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('user_id', type=int, required=True)
         self.reqparse.add_argument('heart_rate', type=int, required=True)
+
+        self.getparser = reqparse.RequestParser()
+        self.getparser.add_argument('user_id', type=int)
+        self.getparser.add_argument('max', type=int)
+        self.getparser.add_argument('from', type=str)
+        self.getparser.add_argument('until', type=str)
+
         super(MeasurementsAPI, self).__init__()
 
     def get(self):
-        measurements = models.Measurement.query.all()
+        args = self.getparser.parse_args()
+        query = Measurement.query.order_by(desc(Measurement.timestamp))
+        if args['user_id']:
+            query = query.filter(Measurement.user_id == args['user_id'])
+        if args['max']:
+            query = query.limit(args['max'])
+        measurements = query.all()
 
         if measurements:
             return jsonify(measurements=[m.as_dict() for m in measurements])
@@ -93,7 +108,7 @@ class MeasurementsAPI(Resource):
 
         args = self.reqparse.parse_args()
 
-        m = models.Measurement()
+        m = Measurement()
         m.user_id = args['user_id']  # sqlite does not check if user exists in DB!
         m.heart_rate = args['heart_rate']
 
