@@ -3,7 +3,7 @@ from flask_restful import Resource, reqparse
 from app import api, db
 from sqlalchemy import desc
 
-from app.models import Measurement
+from app.models import Measurement, datetime_converter
 
 """
 
@@ -71,6 +71,7 @@ class MeasurementAPI(Resource):
             return '', 204
         return abort(404, "Measurement with given ID not found")
 
+
 class MeasurementsAPI(Resource):
     """
     """
@@ -84,8 +85,8 @@ class MeasurementsAPI(Resource):
         self.getparser = reqparse.RequestParser()
         self.getparser.add_argument('user_id', type=int)
         self.getparser.add_argument('max', type=int)
-        self.getparser.add_argument('from', type=str)
-        self.getparser.add_argument('until', type=str)
+        self.getparser.add_argument('from', type=datetime_converter)
+        self.getparser.add_argument('until', type=datetime_converter)
 
         super(MeasurementsAPI, self).__init__()
 
@@ -96,6 +97,11 @@ class MeasurementsAPI(Resource):
             query = query.filter(Measurement.user_id == args['user_id'])
         if args['max']:
             query = query.limit(args['max'])
+        if args['from']:
+            query = query.filter(Measurement.timestamp >= args['from'])
+        if args['until']:
+            query = query.filter(Measurement.timestamp <= args['until'])
+
         measurements = query.all()
 
         if measurements:

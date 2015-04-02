@@ -39,6 +39,7 @@ class Measurement(db.Model):
         result_dict['timestamp'] = result_dict['timestamp'].__str__()
         return result_dict
 
+
 class Exercise(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey("user.id"), nullable=False)
@@ -56,3 +57,8 @@ class Exercise(db.Model):
         result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         result_dict['type'] = result_dict['type'].__str__()
         return result_dict
+
+
+def datetime_converter(dt_string):
+    dt = datetime.datetime.strptime(dt_string, '%Y%m%d%H%M%S')
+    return dt
