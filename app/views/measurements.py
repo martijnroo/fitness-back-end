@@ -106,6 +106,8 @@ class MeasurementsAPI(Resource):
 
         if measurements:
             return jsonify(measurements=[m.as_dict() for m in measurements])
+        else:
+            return jsonify(measurements=[])
 
     def post(self):
         """

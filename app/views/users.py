@@ -44,7 +44,7 @@ class UserAPI(Resource):
         """
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('name', type = str)
+        self.reqparse.add_argument('name', type=str, required=True)
         super(UserAPI, self).__init__()
 
     def get(self, id=-1):
@@ -111,7 +111,7 @@ class UsersAPI(Resource):
     def __init__(self):
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('name', type = str)
+        self.reqparse.add_argument('name', type=str, required=True)
         super(UsersAPI, self).__init__()
 
     def get(self):
@@ -119,6 +119,8 @@ class UsersAPI(Resource):
 
         if users:
             return jsonify(users=[u.as_dict() for u in users])
+        else:
+            return jsonify(users=[])
 
     def post(self):
         """
