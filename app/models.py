@@ -43,11 +43,10 @@ class Measurement(db.Model):
 class Exercise(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey("user.id"), nullable=False)
-    start_ts = db.Column(db.Integer, index=True)
-    end_ts = db.Column(db.Integer, index=True)
+    start = db.Column(db.DateTime, index=True)
+    end = db.Column(db.DateTime, index=True)
     type = db.Column(db.String(64), index=True)
-    duration = db.Column(db.Integer, index=True)
-    avg_hr = db.Column(db.Integer, index=True)
+    avg_heart_rate = db.Column(db.Integer, index=True)
 
     def __repr__(self):
         return '<Exercise %i>' % (self.id)
@@ -60,5 +59,12 @@ class Exercise(db.Model):
 
 
 def datetime_converter(dt_string):
+    """
+    Helper function for request parsers to convert a datetime string
+    to a datetime object.
+
+    :param dt_string: A datetime string in the format yyyymmddhhmmss
+    :return: Returns a datetime object
+    """
     dt = datetime.datetime.strptime(dt_string, '%Y%m%d%H%M%S')
     return dt
