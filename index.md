@@ -85,7 +85,12 @@ Deletes a specific user. Returns HTTP status 204 if successful or HTTP status 40
 
 ###### GET {{ url }}
 
-Returns a list of all measurements.
+Returns a list of all measurements, sorted from most to least recent. Optional filter parameters are:
+
+- user_id:int - Only retrieve measurements from a specific user.
+- max:int - Limits the number of retrieved measurements (i.e. the x most recent measurements are retrieved).
+- from:string - Only measurements registered after this time are retrieved. The format is: `yyyymmddhhss`, e.g. 201504021340.
+- until:string - Only measurements registered before this time are retrieved. Format is the same as for from.
 
 ```javascript
 {
@@ -111,6 +116,17 @@ Returns a list of all measurements.
   ]
 }
 ```
+
+Sending the following filter parameters:
+
+```javascript
+"user_id": 2
+"max": 1
+"from": 20150301000000
+```
+
+Returns one measurement from user 2, registered after March 1st 2015 at midnight if such a measurement exists.
+
 
 ###### POST {{ url }}
 
