@@ -49,7 +49,7 @@ class Exercise(db.Model):
     avg_heart_rate = db.Column(db.Integer, index=True)
 
     def __repr__(self):
-        return '<Exercise %i>' % (self.id)
+        return '<Exercise %r>' % (self.id)
 
     # for json serialization
     def as_dict(self):

@@ -1,6 +1,7 @@
 from flask import jsonify, abort
 from flask.ext.restful import Api, Resource, reqparse, fields, marshal
 from app import api, models, db
+import datetime
 
 """
 
@@ -76,31 +77,26 @@ class ExercisesAPI(Resource):
     def __init__(self):
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('user_id', type=int)
-        self.reqparse.add_argument('type', type=str)
-        self.reqparse.add_argument('startts', type=int)
-        self.reqparse.add_argument('endts', type=int)
-        self.reqparse.add_argument('duration', type=int)
-        self.reqparse.add_argument('value', type=int)
+
         super(ExercisesAPI, self).__init__()
 
     def get(self):
+        """
+            Returns exercises that match the query.
+            Additional parameters allowed (you can use multiple):
+
+            user_id : int   filter by user id
+            type    : str   filter by activity type
+            value   : int   filter by average heart rate
+
+        """
+
+        self.reqparse.add_argument('user_id', type=int)
+        self.reqparse.add_argument('type', type=str)
+        self.reqparse.add_argument('average_hr', type=int, dest='avg_heart_rate')
+
         args = self.reqparse.parse_args()
-
-        # this defines the additional parameters you can filter the query with
-        allowed_fields = {
-                'user_id': fields.Integer,
-                'type': fields.String,
-                #'startts': fields.DateTime(attribute='start'),
-                #'endts': fields.DateTime(attribute='end'),
-                #'duration': fields.Integer,
-                'value': fields.Integer(attribute='avg_heart_rate')
-        }
-        
-        filter_args = marshal(args, allowed_fields)                   # filter the allowed_fields from args
         filter_args = dict((k, v) for k, v in args.iteritems() if v)  # remove empty dict items
-
-        print filter_args
 
         exercises = models.Exercise.query.filter_by(**filter_args)    # filter by given args
         
@@ -110,25 +106,32 @@ class ExercisesAPI(Resource):
     def post(self):
         """
             Creates a new exercise with given args. Returns 201 on success.
+
+            user_id     : int   the id of the user exercising
+            type        : str   the activity type. i.e. ice hockey
+            start       : int   the start time of the exercise (seconds since epoch)
+            end         : int   the end time of the exercise (seconds since epoch)
+
         """
 
-        # TODO: calculate the duration here depending on the startts and endts
+        self.reqparse.add_argument('user_id', type=int, required=True)
+        self.reqparse.add_argument('type', type=str, required=True)
+        self.reqparse.add_argument('start', type=int, required=True)
+        self.reqparse.add_argument('end', type=int, required=True)
+        #self.reqparse.add_argument('average_hr', type=int, dest='avg_heart_rate') # This should be calculated
 
         args = self.reqparse.parse_args()
-        print args
 
-        if not (args['user_id'] and args['type'] and args['startts'] and args['endts'] and args['duration'] and args['value']):
-            response = jsonify({'message': 'All fields are required...', 'status': 400})
-            response.status_code = 400
-            return response
+        # convert the end and start times to DateTime objects on creation
+        if "start" in args:
+            args["start"] = datetime.datetime.fromtimestamp(args["start"])
+        if "end" in args:
+            args["end"] = datetime.datetime.fromtimestamp(args["end"])
 
-        m = models.Exercise()
-        m.user_id = args['user_id'] # No check if user exists!
-        m.type = args['type']
-        m.start_ts = args['startts']
-        m.end_ts = args['endts']
-        m.duration = args['duration']
-        m.avg_hr = args['value']
+        # TODO: calculate the duration here (?) depending on the startts and endts
+        # TODO: calculate the average HR here (?)
+
+        m = models.Exercise(**args)
 
         db.session.add(m)
         db.session.commit()
