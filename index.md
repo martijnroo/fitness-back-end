@@ -91,6 +91,7 @@ Returns a list of all measurements, sorted from most to least recent. Optional f
 - max:int - Limits the number of retrieved measurements (i.e. the x most recent measurements are retrieved).
 - from:string - Only measurements registered after this time are retrieved. The format is: `yyyymmddhhss`, e.g. 201504021340.
 - until:string - Only measurements registered before this time are retrieved. Format is the same as for from.
+- exercise_id:int - Only measurements that belong to a specific exercise are retrieved.
 
 ```javascript
 {
@@ -144,3 +145,84 @@ Returns:
 ```javascript
 4
 ```
+
+### Exercises
+
+{% assign url = "/exercises/" %}
+
+###### GET {{ url }}
+
+Returns a list of all recorded exercises.
+
+```javascript
+{
+  "exercises": [
+    {
+      "avg_heart_rate": 63, 
+      "end": "Fri, 03 Apr 2015 05:09:53 GMT", 
+      "id": 1, 
+      "start": "Thu, 02 Apr 2015 23:39:49 GMT", 
+      "type": "walking", 
+      "user_id": 0
+    }, 
+    {
+      "avg_heart_rate": 89, 
+      "end": "Fri, 03 Apr 2015 10:44:37 GMT", 
+      "id": 2, 
+      "start": "Fri, 03 Apr 2015 10:28:18 GMT", 
+      "type": "sleeping", 
+      "user_id": 0
+    },  
+    {
+      "avg_heart_rate": 78, 
+      "end": "Thu, 30 Apr 2015 12:45:00 GMT", 
+      "id": 3, 
+      "start": "Thu, 30 Apr 2015 12:30:00 GMT", 
+      "type": "fishing", 
+      "user_id": 1
+    }
+  ]
+}
+```
+
+###### POST {{ url }}
+
+Creates a new exercise with the given name. Returns the new exercise's id and HTTP status 201 if successful.
+
+Send:
+
+```javascript
+user_id : int   the id of the user exercising
+type    : str   the activity type. i.e. ice hockey
+start   : int   the start time of the exercise in format yyyymmddhhmmss
+end     : int   the end time of the exerciss in format yyyymmddhhmmss
+```
+
+Returns the id of the created exercise
+
+```javascript
+1
+```
+
+{% assign url = "/exercises/\<int:id\>" %}
+
+###### GET {{ url }}
+
+Returns data for the specific exercise.
+
+```javascript
+{
+  "avg_heart_rate": null, 
+  "end": "Thu, 30 Apr 2015 12:45:00 GMT", 
+  "id": 18, 
+  "start": "Thu, 30 Apr 2015 12:30:00 GMT", 
+  "type": "fishing", 
+  "user_id": 1
+}
+```
+
+
+###### DELETE {{ url }}
+
+Deletes a specific exercise. Returns HTTP status 204 if successful or HTTP status 404 if user did not exist.
+
