@@ -1,6 +1,7 @@
 import os
 
 SECRET_KEY = 'random_secret_please_change'
+DEBUG = True
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

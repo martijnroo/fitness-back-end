@@ -2,6 +2,7 @@ from flask import jsonify, abort
 from flask.ext.restful import Api, Resource, reqparse
 from app import api, models, db
 
+from config import DEBUG
 
 """
 
@@ -144,6 +145,50 @@ class AuthenticationAPI(Resource):
     def get(self):
         return {'token': 'X12391239ushda9dajq19qWFQ")#hw2l3ihtw283rhf'}
 
+class Populate(Resource):
+    """
+        Populates the database
+    """
+    def get(self):
+
+        from app.models import User, Measurement, Exercise
+        import random
+        import datetime
+        import time
+
+        user_names = ["Pertti", "Tapio", "Jones", "Jack", "Jackson"]
+        types = ["jogging", "running", "walking", "sleeping", "longboarding", "ice hockey", "rugby"]
+        current_time = int(time.time())
+
+        # create some users
+        for idx, name in enumerate(user_names):
+            u = models.User(nickname=name, id=idx-1)
+            db.session.add(u)
+
+        # create some measurements
+        for i in range(0, len(user_names)):
+            for j in range(0, 10):
+                r = random.randint(30, 140)
+                t = datetime.datetime.utcfromtimestamp(current_time - random.randint(0, 43200)) # last 12 hours
+                m = models.Measurement(user_id=i, heart_rate=r, timestamp=t)
+                db.session.add(m)
+
+        # add a few exercises
+        for i in range(0, len(user_names)):
+            for j in range(0, 3):
+                start_time = current_time - random.randint(0, 43200)
+                end_time = min((start_time + random.randint(0, 43200)), current_time)
+                start = datetime.datetime.utcfromtimestamp(start_time)
+                end = datetime.datetime.utcfromtimestamp(end_time)
+                e = models.Exercise(user_id=i, start=start, end=end, type=random.choice(types))
+                db.session.add(e)
+
+        db.session.commit()
+
+        return "success.", 201
+
+if DEBUG:
+    api.add_resource(Populate, '/populate/')
 
 # API endpoints
 api.add_resource(UserAPI, '/users/<int:id>')

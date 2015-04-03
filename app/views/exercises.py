@@ -1,7 +1,6 @@
 from flask import jsonify, abort
-from flask.ext.restful import Api, Resource, reqparse
+from flask.ext.restful import Api, Resource, reqparse, fields, marshal
 from app import api, models, db
-
 
 """
 
@@ -86,15 +85,34 @@ class ExercisesAPI(Resource):
         super(ExercisesAPI, self).__init__()
 
     def get(self):
-        exercises = models.Exercise.query.all()
+        args = self.reqparse.parse_args()
 
+        # this defines the additional parameters you can filter the query with
+        allowed_fields = {
+                'user_id': fields.Integer,
+                'type': fields.String,
+                #'startts': fields.DateTime(attribute='start'),
+                #'endts': fields.DateTime(attribute='end'),
+                #'duration': fields.Integer,
+                'value': fields.Integer(attribute='avg_heart_rate')
+        }
+        
+        filter_args = marshal(args, allowed_fields)                   # filter the allowed_fields from args
+        filter_args = dict((k, v) for k, v in args.iteritems() if v)  # remove empty dict items
+
+        print filter_args
+
+        exercises = models.Exercise.query.filter_by(**filter_args)    # filter by given args
+        
         if exercises:
             return jsonify(exercises=[m.as_dict() for m in exercises])
 
     def post(self):
         """
-            Creates a new user with given args. Returns 201 on success.
+            Creates a new exercise with given args. Returns 201 on success.
         """
+
+        # TODO: calculate the duration here depending on the startts and endts
 
         args = self.reqparse.parse_args()
         print args
@@ -116,7 +134,6 @@ class ExercisesAPI(Resource):
         db.session.commit()
 
         return m.id, 201
-
 
 # API endpoints
 api.add_resource(ExerciseAPI, '/exercises/<int:id>')
