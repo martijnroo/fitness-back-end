@@ -3,7 +3,7 @@ from flask_restful import Resource, reqparse
 from app import api, db
 from sqlalchemy import desc
 
-from app.models import Measurement, datetime_converter
+from app.models import Measurement, Exercise, datetime_converter
 
 """
 
@@ -81,12 +81,14 @@ class MeasurementsAPI(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('user_id', type=int, required=True)
         self.reqparse.add_argument('heart_rate', type=int, required=True)
+        self.reqparse.add_argument('timestamp', type=datetime_converter)
 
         self.getparser = reqparse.RequestParser()
         self.getparser.add_argument('user_id', type=int)
         self.getparser.add_argument('max', type=int)
         self.getparser.add_argument('from', type=datetime_converter)
         self.getparser.add_argument('until', type=datetime_converter)
+        self.getparser.add_argument('exercise_id', type=int)
 
         super(MeasurementsAPI, self).__init__()
 
@@ -101,6 +103,12 @@ class MeasurementsAPI(Resource):
             query = query.filter(Measurement.timestamp >= args['from'])
         if args['until']:
             query = query.filter(Measurement.timestamp <= args['until'])
+        if args['exercise_id']:
+            ex = Exercise.query.get(args['exercise_id'])
+            if ex and ex.start and ex.end:
+                query = query.filter(Measurement.timestamp.between(ex.start, ex.end))
+            else:
+                abort(404, "Invalid exercise data with given exercise_id")
 
         measurements = query.all()
 
@@ -117,8 +125,12 @@ class MeasurementsAPI(Resource):
         args = self.reqparse.parse_args()
 
         m = Measurement()
+        
         m.user_id = args['user_id']  # sqlite does not check if user exists in DB!
         m.heart_rate = args['heart_rate']
+
+        if args['timestamp']:
+            m.timestamp = args['timestamp']
 
         db.session.add(m)
         db.session.commit()

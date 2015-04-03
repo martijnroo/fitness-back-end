@@ -1,6 +1,8 @@
 from flask import jsonify, abort
 from flask.ext.restful import Api, Resource, reqparse, fields, marshal
 from app import api, models, db
+from app.models import datetime_converter
+
 import datetime
 
 """
@@ -116,17 +118,17 @@ class ExercisesAPI(Resource):
 
         self.reqparse.add_argument('user_id', type=int, required=True)
         self.reqparse.add_argument('type', type=str, required=True)
-        self.reqparse.add_argument('start', type=int, required=True)
-        self.reqparse.add_argument('end', type=int, required=True)
+        self.reqparse.add_argument('start', type=datetime_converter)
+        self.reqparse.add_argument('end', type=datetime_converter)
         #self.reqparse.add_argument('average_hr', type=int, dest='avg_heart_rate') # This should be calculated
 
         args = self.reqparse.parse_args()
 
         # convert the end and start times to DateTime objects on creation
-        if "start" in args:
-            args["start"] = datetime.datetime.fromtimestamp(args["start"])
-        if "end" in args:
-            args["end"] = datetime.datetime.fromtimestamp(args["end"])
+        #if "start" in args:
+        #    args["start"] = datetime.datetime.fromtimestamp(args["start"])
+        #if "end" in args:
+        #    args["end"] = datetime.datetime.fromtimestamp(args["end"])
 
         # TODO: calculate the duration here (?) depending on the startts and endts
         # TODO: calculate the average HR here (?)
@@ -139,5 +141,5 @@ class ExercisesAPI(Resource):
         return m.id, 201
 
 # API endpoints
-api.add_resource(ExerciseAPI, '/exercises/<int:id>')
-api.add_resource(ExercisesAPI, '/exercises/')
+api.add_resource(ExerciseAPI, '/exercises/<int:id>')    # get an exercise by id
+api.add_resource(ExercisesAPI, '/exercises/')           # fetch all the exercises
