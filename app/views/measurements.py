@@ -79,9 +79,9 @@ class MeasurementsAPI(Resource):
     def __init__(self):
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('user_id', type=int, required=True)
-        self.reqparse.add_argument('heart_rate', type=int, required=True)
-        self.reqparse.add_argument('timestamp', type=datetime_converter)
+        self.reqparse.add_argument('user_id', type=int, required=True, action='append')
+        self.reqparse.add_argument('heart_rate', type=int, required=True, action='append')
+        self.reqparse.add_argument('timestamp', type=datetime_converter, action='append')
 
         self.getparser = reqparse.RequestParser()
         self.getparser.add_argument('user_id', type=int)
@@ -126,14 +126,30 @@ class MeasurementsAPI(Resource):
 
         m = Measurement()
         
-        m.user_id = args['user_id']  # sqlite does not check if user exists in DB!
-        m.heart_rate = args['heart_rate']
+        list_uid = args['user_id']
+        list_hr = args['heart_rate']
+        list_ts = args['timestamp']
+        
+        # Check if application provided the same number of parameters
+        # for both UID and HR
+        if len(list_uid)!=len(list_hr):
+            abort(404, "Inconsistent number of URL parameters")
 
-        if args['timestamp']:
-            m.timestamp = args['timestamp']
+        # NOTE: sqlite does not check if user exists in DB
+        for i in range(len(list_uid)):
+            m = Measurement()
+            m.user_id = list_uid[i]
+            m.heart_rate = list_hr[i]
+            if args['timestamp']:
+                m.timestamp = list_ts[i]
+            db.session.add(m)
+            db.session.commit()
+        #m.user_id = args['user_id']  # sqlite does not check if user exists in DB!
+        #m.heart_rate = args['heart_rate']
+        #m.timestamp = args['timestamp']
 
-        db.session.add(m)
-        db.session.commit()
+        #db.session.add(m)
+        #db.session.commit()
 
         return m.id, 201
 
