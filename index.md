@@ -131,19 +131,28 @@ Returns one measurement from user 2, registered after March 1st 2015 at midnight
 
 ###### POST {{ url }}
 
-Creates a new measurement. Returns the new measurement's id and HTTP status 201 if successful. The server generates an id and a timestamp for the measurement.
+Creates one or more new measurements. Returns HTTP status 201 if successful. The server generates id's for the measurements. The server also generates a timestamp for each measurement that does not have one.
 
 Send:
 
 ```javascript
-"heart_rate": 64,
-"user_id": 2
-```
-
-Returns:
-
-```javascript
-4
+{
+    "measurements": [
+        {
+            "heart_rate": 64,
+            "user_id": 2
+        },
+        {
+            "heart_rate": 80,
+            "user_id": 5,
+            "timestamp": 201504021340
+        },
+        {
+            "heart_rate": 77,
+            "user_id": 2
+        }
+    ]
+}
 ```
 
 ### Exercises
@@ -158,27 +167,27 @@ Returns a list of all recorded exercises.
 {
   "exercises": [
     {
-      "avg_heart_rate": 63, 
-      "end": "Fri, 03 Apr 2015 05:09:53 GMT", 
-      "id": 1, 
-      "start": "Thu, 02 Apr 2015 23:39:49 GMT", 
-      "type": "walking", 
+      "avg_heart_rate": 63,
+      "end": "Fri, 03 Apr 2015 05:09:53 GMT",
+      "id": 1,
+      "start": "Thu, 02 Apr 2015 23:39:49 GMT",
+      "type": "walking",
       "user_id": 0
-    }, 
+    },
     {
-      "avg_heart_rate": 89, 
-      "end": "Fri, 03 Apr 2015 10:44:37 GMT", 
-      "id": 2, 
-      "start": "Fri, 03 Apr 2015 10:28:18 GMT", 
-      "type": "sleeping", 
+      "avg_heart_rate": 89,
+      "end": "Fri, 03 Apr 2015 10:44:37 GMT",
+      "id": 2,
+      "start": "Fri, 03 Apr 2015 10:28:18 GMT",
+      "type": "sleeping",
       "user_id": 0
     },  
     {
-      "avg_heart_rate": 78, 
-      "end": "Thu, 30 Apr 2015 12:45:00 GMT", 
-      "id": 3, 
-      "start": "Thu, 30 Apr 2015 12:30:00 GMT", 
-      "type": "fishing", 
+      "avg_heart_rate": 78,
+      "end": "Thu, 30 Apr 2015 12:45:00 GMT",
+      "id": 3,
+      "start": "Thu, 30 Apr 2015 12:30:00 GMT",
+      "type": "fishing",
       "user_id": 1
     }
   ]
@@ -212,11 +221,11 @@ Returns data for the specific exercise.
 
 ```javascript
 {
-  "avg_heart_rate": null, 
-  "end": "Thu, 30 Apr 2015 12:45:00 GMT", 
-  "id": 18, 
-  "start": "Thu, 30 Apr 2015 12:30:00 GMT", 
-  "type": "fishing", 
+  "avg_heart_rate": null,
+  "end": "Thu, 30 Apr 2015 12:45:00 GMT",
+  "id": 18,
+  "start": "Thu, 30 Apr 2015 12:30:00 GMT",
+  "type": "fishing",
   "user_id": 1
 }
 ```
@@ -225,4 +234,3 @@ Returns data for the specific exercise.
 ###### DELETE {{ url }}
 
 Deletes a specific exercise. Returns HTTP status 204 if successful or HTTP status 404 if user did not exist.
-
