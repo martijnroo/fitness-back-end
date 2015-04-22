@@ -68,3 +68,31 @@ def datetime_converter(dt_string):
     """
     dt = datetime.datetime.strptime(dt_string, '%Y%m%d%H%M%S')
     return dt
+
+
+def measurements_list(value):
+    measurements = value
+    if not isinstance(measurements, list):
+        raise ValueError("measurements is not a list")
+
+    result = []
+    for measurement in measurements:
+        m = dict()
+
+        if 'user_id' not in measurement or not isinstance(measurement['user_id'], int):
+            raise ValueError("Measurement without valid user_id in list")
+        m['user_id'] = measurement['user_id']
+
+        if 'heart_rate' not in measurement or not isinstance(measurement['heart_rate'], int):
+            raise ValueError("Measurement without valid heart_rate in list")
+        m['heart_rate'] = measurement['heart_rate']
+
+        if 'timestamp' in measurement:
+            try:
+                m['timestamp'] = datetime_converter(measurement['timestamp'])
+            except:
+                raise ValueError("A timestamp was formatted incorrectly")
+
+        result.append(m)
+
+    return result

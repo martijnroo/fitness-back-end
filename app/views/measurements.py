@@ -3,7 +3,7 @@ from flask_restful import Resource, reqparse
 from app import api, db
 from sqlalchemy import desc
 
-from app.models import Measurement, Exercise, datetime_converter
+from app.models import Measurement, Exercise, datetime_converter, measurements_list
 
 """
 
@@ -79,9 +79,7 @@ class MeasurementsAPI(Resource):
     def __init__(self):
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('user_id', type=int, required=True, action='append')
-        self.reqparse.add_argument('heart_rate', type=int, required=True, action='append')
-        self.reqparse.add_argument('timestamp', type=datetime_converter, action='append')
+        self.reqparse.add_argument('measurements', type=measurements_list, location='json', required=True)  # For some reason this needs the location to work
 
         self.getparser = reqparse.RequestParser()
         self.getparser.add_argument('user_id', type=int)
@@ -121,37 +119,22 @@ class MeasurementsAPI(Resource):
         """
             Creates a new measurement with given args. Returns 201 on success.
         """
-
         args = self.reqparse.parse_args()
-
-        m = Measurement()
-        
-        list_uid = args['user_id']
-        list_hr = args['heart_rate']
-        list_ts = args['timestamp']
-        
-        # Check if application provided the same number of parameters
-        # for both UID and HR
-        if len(list_uid)!=len(list_hr):
-            abort(404, "Inconsistent number of URL parameters")
+        measurements = args['measurements']
 
         # NOTE: sqlite does not check if user exists in DB
-        for i in range(len(list_uid)):
+        for measurement in measurements:
             m = Measurement()
-            m.user_id = list_uid[i]
-            m.heart_rate = list_hr[i]
-            if args['timestamp']:
-                m.timestamp = list_ts[i]
+            m.user_id = measurement['user_id']
+            m.heart_rate = measurement['heart_rate']
+            if 'timestamp' in measurement:
+                m.timestamp = measurement['timestamp']
             db.session.add(m)
             db.session.commit()
-        #m.user_id = args['user_id']  # sqlite does not check if user exists in DB!
-        #m.heart_rate = args['heart_rate']
-        #m.timestamp = args['timestamp']
 
-        #db.session.add(m)
-        #db.session.commit()
-
-        return m.id, 201
+        response = jsonify(status=201, message='All {} measurements were added successfully'.format(len(measurements)))
+        response.status_code = 201
+        return response
 
 
 # API endpoints
