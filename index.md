@@ -89,7 +89,7 @@ Returns a list of all measurements, sorted from most to least recent. Optional f
 
 - user_id:int - Only retrieve measurements from a specific user.
 - max:int - Limits the number of retrieved measurements (i.e. the x most recent measurements are retrieved).
-- from:string - Only measurements registered after this time are retrieved. The format is: `yyyymmddhhss`, e.g. 201504021340.
+- from:string - Only measurements registered after this time are retrieved. The format is: `yyyymmddhhmmssfff`, e.g. 20150522181130000.
 - until:string - Only measurements registered before this time are retrieved. Format is the same as for from.
 - exercise_id:int - Only measurements that belong to a specific exercise are retrieved.
 
@@ -99,19 +99,19 @@ Returns a list of all measurements, sorted from most to least recent. Optional f
     {
       "heart_rate": 70,
       "id": 1,
-      "timestamp": "Wed, 25 Mar 2015 17:12:49 GMT",
+      "timestamp": "20150522181137759",
       "user_id": 2
     },
     {
       "heart_rate": 84,
       "id": 2,
-      "timestamp": "Wed, 25 Mar 2015 17:12:56 GMT",
+      "timestamp": "20150522181131145",
       "user_id": 3
     },
     {
       "heart_rate": 64,
       "id": 3,
-      "timestamp": "Wed, 25 Mar 2015 17:12:59 GMT",
+      "timestamp": "20150522181130000",
       "user_id": 2
     }
   ]
@@ -123,7 +123,7 @@ Sending the following filter parameters:
 ```javascript
 "user_id": 2
 "max": 1
-"from": 20150301000000
+"from": "20150522181137759"
 ```
 
 Returns one measurement from user 2, registered after March 1st 2015 at midnight if such a measurement exists.
@@ -145,7 +145,7 @@ Send:
         {
             "heart_rate": 80,
             "user_id": 5,
-            "timestamp": 201504021340
+            "timestamp": 20150522181137000
         },
         {
             "heart_rate": 77,
@@ -168,25 +168,25 @@ Returns a list of all recorded exercises.
   "exercises": [
     {
       "avg_heart_rate": 63,
-      "end": "Fri, 03 Apr 2015 05:09:53 GMT",
+      "end": "20150522181137000",
       "id": 1,
-      "start": "Thu, 02 Apr 2015 23:39:49 GMT",
+      "start": "20150418181137000",
       "type": "walking",
       "user_id": 0
     },
     {
       "avg_heart_rate": 89,
-      "end": "Fri, 03 Apr 2015 10:44:37 GMT",
+      "end": "20150418181137000",
       "id": 2,
-      "start": "Fri, 03 Apr 2015 10:28:18 GMT",
+      "start": "20150418121137000",
       "type": "sleeping",
       "user_id": 0
     },  
     {
       "avg_heart_rate": 78,
-      "end": "Thu, 30 Apr 2015 12:45:00 GMT",
+      "end": "20150418181137000",
       "id": 3,
-      "start": "Thu, 30 Apr 2015 12:30:00 GMT",
+      "start": "20150418111137000",
       "type": "fishing",
       "user_id": 1
     }
@@ -203,8 +203,8 @@ Send:
 ```javascript
 user_id : int   the id of the user exercising
 type    : str   the activity type. i.e. ice hockey
-start   : int   the start time of the exercise in format yyyymmddhhmmss
-end     : int   the end time of the exerciss in format yyyymmddhhmmss
+start   : int   the start time of the exercise in format yyyymmddhhmmssfff
+end     : int   the end time of the exerciss in format yyyymmddhhmmssfff
 ```
 
 Returns the id of the created exercise
@@ -222,9 +222,9 @@ Returns data for the specific exercise.
 ```javascript
 {
   "avg_heart_rate": null,
-  "end": "Thu, 30 Apr 2015 12:45:00 GMT",
+  "end": "20150522181130000",
   "id": 18,
-  "start": "Thu, 30 Apr 2015 12:30:00 GMT",
+  "start": "20150522181130000",
   "type": "fishing",
   "user_id": 1
 }
