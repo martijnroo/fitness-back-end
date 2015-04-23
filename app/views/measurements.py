@@ -78,8 +78,9 @@ class MeasurementsAPI(Resource):
 
     def __init__(self):
 
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('measurements', type=measurements_list, location='json', required=True)  # For some reason this needs the location to work
+        self.postparser = reqparse.RequestParser()
+        # For some reason this needs the location to work
+        self.postparser.add_argument('measurements', type=measurements_list, location='json', required=True)
 
         self.getparser = reqparse.RequestParser()
         self.getparser.add_argument('user_id', type=int)
@@ -119,7 +120,7 @@ class MeasurementsAPI(Resource):
         """
             Creates a new measurement with given args. Returns 201 on success.
         """
-        args = self.reqparse.parse_args()
+        args = self.postparser.parse_args()
         measurements = args['measurements']
 
         # NOTE: sqlite does not check if user exists in DB

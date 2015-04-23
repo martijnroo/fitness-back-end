@@ -10,6 +10,8 @@ import datetime
     file to save the heartbeat data in a clever way for each user.
 """
 
+datetime_format = '%Y%m%d%H%M%S%f'
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,7 +38,7 @@ class Measurement(db.Model):
     # for json serialization
     def as_dict(self):
         result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        result_dict['timestamp'] = result_dict['timestamp'].__str__()
+        result_dict['timestamp'] = result_dict['timestamp'].strftime(datetime_format)[:17]
         return result_dict
 
 
@@ -63,10 +65,10 @@ def datetime_converter(dt_string):
     Helper function for request parsers to convert a datetime string
     to a datetime object.
 
-    :param dt_string: A datetime string in the format yyyymmddhhmmss
+    :param dt_string: A datetime string in the format yyyymmddhhmmssfff
     :return: Returns a datetime object
     """
-    dt = datetime.datetime.strptime(dt_string, '%Y%m%d%H%M%S')
+    dt = datetime.datetime.strptime(dt_string, datetime_format)
     return dt
 
 
