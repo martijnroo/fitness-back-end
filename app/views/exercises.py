@@ -48,7 +48,7 @@ class ExerciseAPI(Resource):
     def get(self, id=-1):
         """
             Returns data for the specific EXERCISE.
-			TODO: Implement functionality to return all EXERCISE IDs for a given USER
+            TODO: Implement functionality to return all EXERCISE IDs for a given USER
         """
 
         # if id provided, fetch the exercise from db and return it as json
@@ -72,12 +72,12 @@ class ExerciseAPI(Resource):
             return '', 204
         return abort(404)
 
+
 class ExercisesAPI(Resource):
     """
     """
 
     def __init__(self):
-
         self.reqparse = reqparse.RequestParser()
 
         super(ExercisesAPI, self).__init__()
@@ -95,13 +95,13 @@ class ExercisesAPI(Resource):
 
         self.reqparse.add_argument('user_id', type=int)
         self.reqparse.add_argument('type', type=str)
-        self.reqparse.add_argument('average_hr', type=int, dest='avg_heart_rate')
+        self.reqparse.add_argument('average_rr', type=int, dest='avg_rr_value')
 
         args = self.reqparse.parse_args()
         filter_args = dict((k, v) for k, v in args.iteritems() if v)  # remove empty dict items
 
-        exercises = models.Exercise.query.filter_by(**filter_args)    # filter by given args
-        
+        exercises = models.Exercise.query.filter_by(**filter_args)  # filter by given args
+
         if exercises:
             return jsonify(exercises=[m.as_dict() for m in exercises])
 
@@ -120,14 +120,14 @@ class ExercisesAPI(Resource):
         self.reqparse.add_argument('type', type=str, required=True)
         self.reqparse.add_argument('start', type=datetime_converter)
         self.reqparse.add_argument('end', type=datetime_converter)
-        #self.reqparse.add_argument('average_hr', type=int, dest='avg_heart_rate') # This should be calculated
+        # self.reqparse.add_argument('average_rr', type=int, dest='avg_rr_value') # This should be calculated
 
         args = self.reqparse.parse_args()
 
         # convert the end and start times to DateTime objects on creation
-        #if "start" in args:
-        #    args["start"] = datetime.datetime.fromtimestamp(args["start"])
-        #if "end" in args:
+        # if "start" in args:
+        # args["start"] = datetime.datetime.fromtimestamp(args["start"])
+        # if "end" in args:
         #    args["end"] = datetime.datetime.fromtimestamp(args["end"])
 
         # TODO: calculate the duration here (?) depending on the startts and endts
@@ -141,5 +141,5 @@ class ExercisesAPI(Resource):
         return m.id, 201
 
 # API endpoints
-api.add_resource(ExerciseAPI, '/exercises/<int:id>')    # get an exercise by id
-api.add_resource(ExercisesAPI, '/exercises/')           # fetch all the exercises
+api.add_resource(ExerciseAPI, '/exercises/<int:id>')  # get an exercise by id
+api.add_resource(ExercisesAPI, '/exercises/')  # fetch all the exercises

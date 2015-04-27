@@ -37,7 +37,7 @@ class MeasurementAPI(Resource):
             For each API endpoint, you may add additional arguments,
             which are parsed by the RequestParser. In this case, it could
             be for example the format we want to fetch the data
-            or a certain timeframe we want to query the heart
+            or a certain time frame we want to query the heart
             beat data from.
 
             For example:
@@ -50,7 +50,6 @@ class MeasurementAPI(Resource):
             Returns user info.
         """
 
-        # if id provided, fetch the user from db and return it as json
         m = Measurement.query.get(int(id))
 
         if not m:
@@ -127,7 +126,7 @@ class MeasurementsAPI(Resource):
         for measurement in measurements:
             m = Measurement()
             m.user_id = measurement['user_id']
-            m.heart_rate = measurement['heart_rate']
+            m.rr_value = measurement['rr_value']
             if 'timestamp' in measurement:
                 m.timestamp = measurement['timestamp']
             db.session.add(m)

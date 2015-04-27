@@ -170,7 +170,7 @@ class Populate(Resource):
             for j in range(0, 10):
                 r = random.randint(30, 140)
                 t = datetime.datetime.utcfromtimestamp(current_time - random.randint(0, 43200)) # last 12 hours
-                m = models.Measurement(user_id=i, heart_rate=r, timestamp=t)
+                m = models.Measurement(user_id=i, rr_value=r, timestamp=t)
                 db.session.add(m)
 
         # add a few exercises
