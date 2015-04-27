@@ -97,19 +97,19 @@ Returns a list of all measurements, sorted from most to least recent. Optional f
 {
   "measurements": [
     {
-      "heart_rate": 70,
+      "rr_value": 70,
       "id": 1,
       "timestamp": "20150522181137759",
       "user_id": 2
     },
     {
-      "heart_rate": 84,
+      "rr_value": 84,
       "id": 2,
       "timestamp": "20150522181131145",
       "user_id": 3
     },
     {
-      "heart_rate": 64,
+      "rr_value": 64,
       "id": 3,
       "timestamp": "20150522181130000",
       "user_id": 2
@@ -139,16 +139,16 @@ Send:
 {
     "measurements": [
         {
-            "heart_rate": 64,
+            "rr_value": 64,
             "user_id": 2
         },
         {
-            "heart_rate": 80,
+            "rr_value": 80,
             "user_id": 5,
             "timestamp": 20150522181137000
         },
         {
-            "heart_rate": 77,
+            "rr_value": 77,
             "user_id": 2
         }
     ]
@@ -167,7 +167,7 @@ Returns a list of all recorded exercises.
 {
   "exercises": [
     {
-      "avg_heart_rate": 63,
+      "avg_rr_value": 63,
       "end": "20150522181137000",
       "id": 1,
       "start": "20150418181137000",
@@ -175,7 +175,7 @@ Returns a list of all recorded exercises.
       "user_id": 0
     },
     {
-      "avg_heart_rate": 89,
+      "avg_rr_value": 89,
       "end": "20150418181137000",
       "id": 2,
       "start": "20150418121137000",
@@ -183,7 +183,7 @@ Returns a list of all recorded exercises.
       "user_id": 0
     },  
     {
-      "avg_heart_rate": 78,
+      "avg_rr_value": 78,
       "end": "20150418181137000",
       "id": 3,
       "start": "20150418111137000",
@@ -221,7 +221,7 @@ Returns data for the specific exercise.
 
 ```javascript
 {
-  "avg_heart_rate": null,
+  "avg_rr_value": null,
   "end": "20150522181130000",
   "id": 18,
   "start": "20150522181130000",
