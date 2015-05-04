@@ -75,6 +75,10 @@ def datetime_converter(dt_string):
                          '{} is not a valid DateTime'.format(dt_string))
 
     dt = datetime.datetime.strptime(dt_string, datetime_format)
+    if dt.year < 1900:
+        raise ValueError('DateTime string needs to be in the format yyyymmddhhmmssfff (17 digits). '
+                         'The year cannot be before 1900. '
+                         '{} is not a valid DateTime'.format(dt_string))
     return dt
 
 
