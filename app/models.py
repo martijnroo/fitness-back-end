@@ -57,6 +57,8 @@ class Exercise(db.Model):
     def as_dict(self):
         result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         result_dict['type'] = result_dict['type'].__str__()
+        result_dict['start'] = result_dict['start'].strftime(datetime_format)[:17]
+        result_dict['end'] = result_dict['end'].strftime(datetime_format)[:17]
         return result_dict
 
 
