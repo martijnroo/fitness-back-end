@@ -97,19 +97,22 @@ Returns a list of all measurements, sorted from most to least recent. Optional f
 {
   "measurements": [
     {
-      "rr_value": 70,
+      "rr_value": 700,
+      "hr_value": 85,
       "id": 1,
       "timestamp": "20150522181137759",
       "user_id": 2
     },
     {
-      "rr_value": 84,
+      "rr_value": 840,
+      "hr_value": 71,
       "id": 2,
       "timestamp": "20150522181131145",
       "user_id": 3
     },
     {
-      "rr_value": 64,
+      "rr_value": 640,
+      "hr_value": 94,
       "id": 3,
       "timestamp": "20150522181130000",
       "user_id": 2
