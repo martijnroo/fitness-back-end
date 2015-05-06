@@ -39,6 +39,8 @@ class Measurement(db.Model):
     def as_dict(self):
         result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         result_dict['timestamp'] = result_dict['timestamp'].strftime(datetime_format)[:17]
+        if result_dict['rr_value'] > 0:
+            result_dict['hr_value'] = 60*1000/result_dict['rr_value']
         return result_dict
 
 
